@@ -18,46 +18,65 @@ export default function HeroAnimation() {
     const [currentFrame, setCurrentFrame] = useState(0);
     const [animationComplete, setAnimationComplete] = useState(false);
 
-    // Preload all images
+    // Optimized Loading Strategy
     useEffect(() => {
-        const loadedImages: HTMLImageElement[] = [];
-        let loadedCount = 0;
+        let isMounted = true;
 
-        const loadImage = (index: number) => {
-            return new Promise<void>((resolve) => {
+        // Priority: Load first frame immediately to unlock UI
+        const loadFirstFrame = async () => {
+            const img = new Image();
+            const frameNumber = '00001';
+            img.src = `${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`;
+
+            await new Promise<void>((resolve) => {
+                img.onload = () => resolve();
+                img.onerror = () => resolve(); // Proceed even if error
+            });
+
+            if (isMounted) {
+                setImages(prev => {
+                    const newImages = [...prev];
+                    newImages[0] = img;
+                    return newImages;
+                });
+                setImagesLoaded(true); // UNLOCK UI IMMEDIATELY
+            }
+        };
+
+        // Background: Load the rest
+        const loadRemainingFrames = async () => {
+            const loadedImages: HTMLImageElement[] = [];
+            // Initialize array
+            for (let i = 0; i < TOTAL_FRAMES; i++) loadedImages[i] = new Image();
+
+            let loadedCount = 0;
+
+            for (let i = 0; i < TOTAL_FRAMES; i++) {
+                if (!isMounted) break;
+                if (i === 0) continue; // Skip first (already doing it)
+
                 const img = new Image();
-                // Frame number with 5-digit padding: 00001, 00002, ..., 00192
-                const frameNumber = String(index + 1).padStart(FRAME_PADDING, '0');
+                const frameNumber = String(i + 1).padStart(FRAME_PADDING, '0');
                 img.src = `${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`;
 
                 img.onload = () => {
-                    loadedImages[index] = img;
-                    loadedCount++;
-                    setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-                    resolve();
+                    if (!isMounted) return;
+                    setImages(prev => {
+                        const next = [...prev];
+                        next[i] = img;
+                        return next;
+                    });
                 };
-
-                img.onerror = () => {
-                    console.warn(`Failed to load: ${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`);
-                    loadedImages[index] = new Image();
-                    loadedCount++;
-                    setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-                    resolve();
-                };
-            });
+            }
         };
 
-        Promise.all(Array.from({ length: TOTAL_FRAMES }, (_, i) => loadImage(i)))
-            .then(() => {
-                setImages(loadedImages);
-                setImagesLoaded(true);
-            });
+        loadFirstFrame().then(() => loadRemainingFrames());
+
+        return () => { isMounted = false; };
     }, []);
 
     // Handle scroll - map scroll position to frame
     useEffect(() => {
-        if (!imagesLoaded) return;
-
         const handleScroll = () => {
             const scrollY = window.scrollY;
 
@@ -78,11 +97,26 @@ export default function HeroAnimation() {
         handleScroll(); // Initial call
 
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [imagesLoaded]);
+    }, []);
 
-    // Draw current frame to canvas
+    // Draw logic with Fallback
     useEffect(() => {
-        if (!imagesLoaded || images.length === 0) return;
+        // Find the best available frame
+        let frameToDraw = currentFrame;
+
+        // If current frame isn't loaded, fallback to nearest previous loaded frame
+        if (!images[frameToDraw] || !images[frameToDraw].complete) {
+            // Search backwards for a loaded frame
+            for (let i = currentFrame; i >= 0; i--) {
+                if (images[i] && images[i].complete && images[i].naturalWidth > 0) {
+                    frameToDraw = i;
+                    break;
+                }
+            }
+        }
+
+        const img = images[frameToDraw];
+        if (!img || !img.complete || img.naturalWidth === 0) return;
 
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -90,14 +124,15 @@ export default function HeroAnimation() {
         const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
-        const img = images[currentFrame];
-        if (!img || !img.complete || img.naturalWidth === 0) return;
-
         // Set canvas size
         const dpr = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
+
+        // Only resize if necessary (performance)
+        if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+        }
 
         // Contain fit
         const imgRatio = img.naturalWidth / img.naturalHeight;
@@ -119,8 +154,7 @@ export default function HeroAnimation() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
 
-    }, [currentFrame, imagesLoaded, images]);
-
+    }, [currentFrame, images]); // Removed imagesLoaded dependency
     // Handle resize
     useEffect(() => {
         const handleResize = () => setCurrentFrame(prev => prev);
