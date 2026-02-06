@@ -159,11 +159,13 @@ export default function HeroAnimation() {
             >
                 {/* Canvas Container */}
                 <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-full h-full max-w-5xl max-h-[80vh] px-4 flex items-center justify-center">
+                    <div className="relative w-full h-full max-w-5xl max-h-[80vh] px-4 flex items-center justify-center">
                         <canvas
                             ref={canvasRef}
                             className="w-full h-full"
                         />
+                        {/* PATCH: Cover bottom-right watermark relative to image/canvas */}
+                        <div className="absolute bottom-4 right-4 w-48 h-24 bg-black z-50" />
                     </div>
                 </div>
 
@@ -224,6 +226,7 @@ export default function HeroAnimation() {
                         />
                     </div>
                 </motion.div>
+
             </div>
 
             {/* SPACER - Creates scroll distance for the animation */}
