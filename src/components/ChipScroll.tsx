@@ -167,85 +167,61 @@ export default function HeroAnimation() {
                     </div>
                 </div>
 
-                {/* Hero Text - Visible at start */}
+                {/* Hero Text */}
                 <motion.div
-                    className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-6"
+                    className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10"
                     animate={{ opacity: currentFrame < 15 ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }}
                 >
                     {imagesLoaded && (
                         <>
-                            <motion.p
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                                className="text-white/40 text-xs uppercase tracking-[0.4em] mb-3"
-                            >
-                                Expert MacBook Repairs
-                            </motion.p>
                             <motion.h1
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight"
-                                style={{ textShadow: '0 4px 40px rgba(0,0,0,0.9)' }}
+                                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                className="text-[12vw] font-bold text-white tracking-tighter leading-[0.85] mix-blend-difference"
                             >
-                                MacFix Pro
+                                MACFIX<br />PRO
                             </motion.h1>
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="mt-4 text-white/50 text-sm md:text-base max-w-md"
-                            >
-                                Precision repairs, component by component.
-                            </motion.p>
                         </>
                     )}
                 </motion.div>
 
                 {/* Mid Text */}
                 <motion.div
-                    className="absolute inset-0 flex flex-col items-start justify-center pointer-events-none px-8 md:px-16"
+                    className="absolute inset-0 flex flex-col items-start justify-center pointer-events-none px-6 md:px-20 z-10"
                     animate={{ opacity: currentFrame >= 60 && currentFrame < 130 ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-2xl md:text-4xl font-bold text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,0.9)' }}>
-                        Every Component.<br />Inspected.
+                    <h2 className="text-[8vw] font-bold text-white tracking-tighter leading-none mix-blend-difference">
+                        INSIDE<br />
+                        OUT.
                     </h2>
-                    <p className="mt-2 text-white/50 text-sm max-w-xs">
-                        We diagnose at the chip level.
-                    </p>
                 </motion.div>
 
                 {/* End Text */}
                 <motion.div
-                    className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-6"
+                    className="absolute inset-0 flex flex-col items-end justify-center text-right pointer-events-none px-6 md:px-20 z-10"
                     animate={{ opacity: currentFrame >= 175 ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-2xl md:text-4xl font-bold text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,0.9)' }}>
-                        Restored. Perfected.
+                    <h2 className="text-[8vw] font-bold text-white tracking-tighter leading-none mix-blend-difference">
+                        BORN<br />
+                        NEW.
                     </h2>
-                    <p className="mt-2 text-white/50 text-sm max-w-xs">
-                        Your MacBook, like new.
-                    </p>
                 </motion.div>
 
-                {/* Scroll Indicator */}
+                {/* Minimal Scroll Indicator */}
                 <motion.div
-                    className="absolute bottom-6 left-1/2 -translate-x-1/2"
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
                     animate={{ opacity: currentFrame < 10 ? 1 : 0 }}
                 >
-                    <div className="flex flex-col items-center text-white/30">
-                        <span className="text-[10px] uppercase tracking-[0.2em] mb-2">Scroll</span>
+                    <div className="h-12 w-[1px] bg-white/20 overflow-hidden">
                         <motion.div
-                            animate={{ y: [0, 5, 0] }}
-                            transition={{ repeat: Infinity, duration: 1.5 }}
-                            className="w-4 h-6 border border-white/20 rounded-full flex items-start justify-center p-1"
-                        >
-                            <div className="w-0.5 h-1.5 bg-white/40 rounded-full" />
-                        </motion.div>
+                            className="w-full h-full bg-white"
+                            animate={{ y: [-50, 50] }}
+                            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                        />
                     </div>
                 </motion.div>
             </div>
