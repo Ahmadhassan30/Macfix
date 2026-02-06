@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const TOTAL_FRAMES = 240;
-const FRAME_PATH = '/sequence/ezgif-frame-';
-const SCROLL_DISTANCE = 2500; // pixels of scrolling to complete animation
+// NEW IMAGE CONFIGURATION
+const TOTAL_FRAMES = 192;
+const FRAME_PATH = '/sequences/frame_'; // Updated path
+const FRAME_EXTENSION = '.png';         // Updated extension
+const FRAME_PADDING = 5;                // 5 digits: 00001, 00002, etc.
+const SCROLL_DISTANCE = 3000;           // Adjusted for 192 frames
 
 export default function HeroAnimation() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,8 +26,9 @@ export default function HeroAnimation() {
         const loadImage = (index: number) => {
             return new Promise<void>((resolve) => {
                 const img = new Image();
-                const frameNumber = String(index + 1).padStart(3, '0');
-                img.src = `${FRAME_PATH}${frameNumber}.jpg`;
+                // Frame number with 5-digit padding: 00001, 00002, ..., 00192
+                const frameNumber = String(index + 1).padStart(FRAME_PADDING, '0');
+                img.src = `${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`;
 
                 img.onload = () => {
                     loadedImages[index] = img;
@@ -34,6 +38,7 @@ export default function HeroAnimation() {
                 };
 
                 img.onerror = () => {
+                    console.warn(`Failed to load: ${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`);
                     loadedImages[index] = new Image();
                     loadedCount++;
                     setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
@@ -148,10 +153,7 @@ export default function HeroAnimation() {
                 </div>
             )}
 
-            {/* 
-                FIXED HERO - Stays in place while scrolling
-                Only moves away after animation is complete
-            */}
+            {/* FIXED HERO - Stays in place while scrolling */}
             <div
                 className={`${animationComplete ? 'relative' : 'fixed'} inset-0 w-full h-screen bg-black z-40`}
             >
@@ -168,7 +170,7 @@ export default function HeroAnimation() {
                 {/* Hero Text - Visible at start */}
                 <motion.div
                     className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-6"
-                    animate={{ opacity: currentFrame < 20 ? 1 : 0 }}
+                    animate={{ opacity: currentFrame < 15 ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
                 >
                     {imagesLoaded && (
@@ -205,7 +207,7 @@ export default function HeroAnimation() {
                 {/* Mid Text */}
                 <motion.div
                     className="absolute inset-0 flex flex-col items-start justify-center pointer-events-none px-8 md:px-16"
-                    animate={{ opacity: currentFrame >= 80 && currentFrame < 160 ? 1 : 0 }}
+                    animate={{ opacity: currentFrame >= 60 && currentFrame < 130 ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
                 >
                     <h2 className="text-2xl md:text-4xl font-bold text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,0.9)' }}>
@@ -219,7 +221,7 @@ export default function HeroAnimation() {
                 {/* End Text */}
                 <motion.div
                     className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-6"
-                    animate={{ opacity: currentFrame >= 220 ? 1 : 0 }}
+                    animate={{ opacity: currentFrame >= 175 ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
                 >
                     <h2 className="text-2xl md:text-4xl font-bold text-white" style={{ textShadow: '0 4px 40px rgba(0,0,0,0.9)' }}>
@@ -248,10 +250,7 @@ export default function HeroAnimation() {
                 </motion.div>
             </div>
 
-            {/* 
-                SPACER - This creates the scroll distance for the animation
-                While scrolling through this, the fixed hero stays in place
-            */}
+            {/* SPACER - Creates scroll distance for the animation */}
             <div style={{ height: `${SCROLL_DISTANCE}px` }} className="bg-black" />
         </>
     );
