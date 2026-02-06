@@ -6,6 +6,8 @@ export const metadata: Metadata = {
     description: "Professional MacBook repair services. Screen replacements, battery repairs, logic board fixes, and more. Fast turnaround, quality parts.",
 };
 
+import SmoothScrolling from "@/components/SmoothScroll";
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -13,7 +15,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className="antialiased">{children}</body>
+            <body className="antialiased">
+                <SmoothScrolling />
+                {children}
+            </body>
         </html>
     );
 }
