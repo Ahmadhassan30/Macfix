@@ -87,7 +87,7 @@ export default function HeroAnimation() {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d', { alpha: false });
+        const ctx = canvas.getContext('2d', { alpha: true });
         if (!ctx) return;
 
         const img = images[currentFrame];
@@ -116,8 +116,7 @@ export default function HeroAnimation() {
         offsetX = (canvas.width - drawW) / 2;
         offsetY = (canvas.height - drawH) / 2;
 
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
 
     }, [currentFrame, imagesLoaded, images]);
@@ -155,33 +154,25 @@ export default function HeroAnimation() {
 
             {/* FIXED HERO - Stays in place while scrolling */}
             <div
-                className={`${animationComplete ? 'relative' : 'fixed'} inset-0 w-full h-screen bg-black z-40`}
+                className={`${animationComplete ? 'relative' : 'fixed'} inset-0 w-full h-screen z-40`}
+                style={{
+                    background: 'linear-gradient(to bottom, #87CEFA 0%, #1E90FF 25%, #000000 60%)' // Horizon Blue Gradient
+                }}
             >
-                {/* Canvas Container */}
-                <div className="w-full h-full flex items-center justify-center">
-                    <div className="relative w-full h-full max-w-5xl max-h-[80vh] px-4 flex items-center justify-center">
-                        <canvas
-                            ref={canvasRef}
-                            className="w-full h-full"
-                        />
-                        {/* PATCH: Cover bottom-right watermark relative to image/canvas */}
-                        <div className="absolute bottom-4 right-4 w-48 h-24 bg-black z-50" />
-                    </div>
-                </div>
-
-                {/* Hero Text */}
+                {/* 1. LAYER ONE: HERO TEXT (Behind Laptop) */}
                 <motion.div
-                    className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10"
-                    animate={{ opacity: currentFrame < 15 ? 1 : 0 }}
-                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-0"
+                    animate={{ opacity: currentFrame < 20 ? 1 : 0, scale: currentFrame < 20 ? 1 : 0.95 }}
+                    transition={{ duration: 0.8 }}
                 >
                     {imagesLoaded && (
                         <>
                             <motion.h1
-                                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                                initial={{ opacity: 0, y: 100, scale: 0.8 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                className="text-[12vw] font-bold text-white tracking-tighter leading-[0.85] mix-blend-difference"
+                                transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                                className="text-[18vw] font-black tracking-tighter leading-[0.8] text-transparent bg-clip-text bg-gradient-to-b from-blue-900 to-black mix-blend-overlay opacity-50"
+                                style={{ filter: 'blur(0px)' }}
                             >
                                 MACFIX<br />PRO
                             </motion.h1>
@@ -189,25 +180,34 @@ export default function HeroAnimation() {
                     )}
                 </motion.div>
 
-                {/* Mid Text */}
+                {/* 2. LAYER TWO: LAPTOP (Middle) */}
+                <div className="w-full h-full flex items-center justify-center pointer-events-none relative z-10">
+                    <div className="relative w-full h-full max-w-7xl max-h-[90vh] flex items-center justify-center">
+                        <canvas
+                            ref={canvasRef}
+                            className="w-full h-full object-contain drop-shadow-2xl bg-transparent mix-blend-screen"
+                        />
+                    </div>
+                </div>
+
+                {/* 3. LAYER THREE: OVERLAYS (Front) */}
                 <motion.div
-                    className="absolute inset-0 flex flex-col items-start justify-center pointer-events-none px-6 md:px-20 z-10"
+                    className="absolute inset-0 flex flex-col items-start justify-center pointer-events-none px-6 md:px-20 z-20"
                     animate={{ opacity: currentFrame >= 60 && currentFrame < 130 ? 1 : 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-[8vw] font-bold text-white tracking-tighter leading-none mix-blend-difference">
+                    <h2 className="text-[10vw] font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white/20 tracking-tighter leading-none">
                         INSIDE<br />
                         OUT.
                     </h2>
                 </motion.div>
 
-                {/* End Text */}
                 <motion.div
-                    className="absolute inset-0 flex flex-col items-end justify-center text-right pointer-events-none px-6 md:px-20 z-10"
+                    className="absolute inset-0 flex flex-col items-end justify-center text-right pointer-events-none px-6 md:px-20 z-20"
                     animate={{ opacity: currentFrame >= 175 ? 1 : 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-[8vw] font-bold text-white tracking-tighter leading-none mix-blend-difference">
+                    <h2 className="text-[10vw] font-bold text-white tracking-tighter leading-none mix-blend-difference">
                         BORN<br />
                         NEW.
                     </h2>
