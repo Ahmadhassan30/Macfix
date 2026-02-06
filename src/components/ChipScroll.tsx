@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 // NEW IMAGE CONFIGURATION
 const TOTAL_FRAMES = 192;
 const FRAME_PATH = '/sequences/frame_'; // Updated path
-const FRAME_EXTENSION = '.png';         // Updated extension
+const FRAME_EXTENSION = '.webp';        // Updated extension
 const FRAME_PADDING = 5;                // 5 digits: 00001, 00002, etc.
 const SCROLL_DISTANCE = 3000;           // Adjusted for 192 frames
 
