@@ -194,74 +194,93 @@ export default function Home() {
             </section>
 
             {/* QUICK ACTIONS SECTION */}
-            <section className="py-32 bg-gradient-to-b from-black to-neutral-950">
+            <section className="py-40 border-y border-neutral-900">
                 <div className="container mx-auto px-6">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-center mb-16"
+                        className="mb-32"
                     >
-                        <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
-                            Get Started
+                        <h2 className="text-[8vw] md:text-[6vw] leading-[0.9] font-bold tracking-tighter text-white overflow-hidden">
+                            {"GET STARTED".split('').map((char, i) => (
+                                <motion.span
+                                    key={i}
+                                    initial={{ y: "100%" }}
+                                    whileInView={{ y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ ease: [0.33, 1, 0.68, 1], duration: 0.8, delay: i * 0.05 }}
+                                    className="inline-block"
+                                >
+                                    {char === " " ? "\u00A0" : char}
+                                </motion.span>
+                            ))}
                         </h2>
-                        <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
-                            Book a repair, track your device, or browse our premium accessories
-                        </p>
+                        <div className="overflow-hidden mt-8">
+                            <motion.p 
+                                initial={{ y: "100%", opacity: 0 }}
+                                whileInView={{ y: 0, opacity: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ ease: "easeOut", duration: 1, delay: 0.4 }}
+                                className="text-xl md:text-2xl font-light text-neutral-500 max-w-2xl tracking-tight"
+                            >
+                                Book a repair, track your device, or browse our premium accessories
+                            </motion.p>
+                        </div>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div className="flex flex-col">
                         {[
                             {
-                                title: 'Book Repair',
+                                id: "01",
+                                title: 'BOOK REPAIR',
                                 description: 'Schedule your MacBook repair service with our expert technicians',
-                                icon: '🔧',
-                                href: '/book',
-                                gradient: 'from-blue-600 to-blue-700'
+                                href: '/book'
                             },
                             {
-                                title: 'Track Status',
+                                id: "02",
+                                title: 'TRACK STATUS',
                                 description: 'Check the real-time status of your device repair',
-                                icon: '📍',
-                                href: '/track',
-                                gradient: 'from-purple-600 to-purple-700'
+                                href: '/track'
                             },
                             {
-                                title: 'Shop Parts',
+                                id: "03",
+                                title: 'SHOP PARTS',
                                 description: 'Browse genuine Apple parts and premium accessories',
-                                icon: '🛍️',
-                                href: '/products',
-                                gradient: 'from-emerald-600 to-emerald-700'
+                                href: '/products'
                             }
                         ].map((action, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1, duration: 0.6 }}
-                            >
-                                <Link href={action.href}>
-                                    <div className="group h-full bg-neutral-900 border border-neutral-800 rounded-2xl p-8 hover:border-blue-500/50 transition-all cursor-pointer">
-                                        <div className={`w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br ${action.gradient} flex items-center justify-center text-3xl group-hover:scale-110 transition-transform`}>
-                                            {action.icon}
-                                        </div>
-                                        <h3 className="text-2xl font-bold mb-3 group-hover:text-blue-400 transition-colors">
-                                            {action.title}
-                                        </h3>
-                                        <p className="text-neutral-400 mb-6">
-                                            {action.description}
-                                        </p>
-                                        <div className="flex items-center text-blue-400 font-semibold group-hover:translate-x-2 transition-transform">
-                                            Get Started
-                                            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
+                            <Link key={index} href={action.href}>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    className="group border-b border-neutral-800 py-12 md:py-16 flex flex-col md:flex-row md:items-center justify-between cursor-pointer hover:bg-neutral-900/20 transition-all duration-500 px-2 md:px-4"
+                                >
+                                    <div className="flex items-baseline gap-6 md:gap-12">
+                                        <span className="text-xs md:text-sm font-mono text-neutral-600 group-hover:text-white transition-colors duration-500">({action.id})</span>
+                                        <div className="relative overflow-hidden">
+                                            <h3 className="text-4xl md:text-7xl font-bold tracking-tighter text-neutral-300 group-hover:text-white transition-colors duration-500">
+                                                {action.title}
+                                            </h3>
+                                            <div className="absolute top-0 left-0 w-full h-full bg-white mix-blend-difference transform translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                                         </div>
                                     </div>
-                                </Link>
-                            </motion.div>
+                                    
+                                    <div className="flex items-center gap-4 mt-4 md:mt-0">
+                                        <p className="text-neutral-500 font-light text-sm md:text-base max-w-[200px] text-right hidden md:block group-hover:text-neutral-300 transition-colors duration-500">
+                                            {action.description}
+                                        </p>
+                                        <motion.span 
+                                            className="text-2xl md:text-4xl text-white opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"
+                                        >
+                                            →
+                                        </motion.span>
+                                    </div>
+                                </motion.div>
+                            </Link>
                         ))}
                     </div>
                 </div>
