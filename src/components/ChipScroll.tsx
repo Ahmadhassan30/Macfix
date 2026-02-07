@@ -244,27 +244,88 @@ export default function HeroAnimation() {
 
     return (
         <>
-            {/* Loading Screen */}
-            {!imagesLoaded && (
-                <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black">
+            {/* Minimal Award-Winning Loading Screen */}
+            <motion.div
+                className="fixed inset-0 z-[100] bg-black"
+                initial={{ opacity: 1 }}
+                animate={{
+                    opacity: loadProgress === 100 ? 0 : 1,
+                }}
+                transition={{
+                    duration: 1.2,
+                    ease: [0.22, 1, 0.36, 1],
+                    delay: loadProgress === 100 ? 0.5 : 0
+                }}
+                style={{ pointerEvents: loadProgress === 100 ? 'none' : 'auto' }}
+            >
+                {/* Centered Minimal Content */}
+                <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                        className="relative"
                     >
-                        <div className="w-10 h-10 mx-auto mb-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                        <p className="text-white/40 text-xs uppercase tracking-[0.3em] mb-3">Loading</p>
-                        <div className="w-40 h-[2px] bg-white/10 rounded-full overflow-hidden">
+                        {/* Thin Progress Line */}
+                        <div className="w-[280px] h-[1px] bg-white/5 mb-8 overflow-hidden">
                             <motion.div
                                 className="h-full bg-white"
-                                initial={{ width: 0 }}
+                                initial={{ width: '0%' }}
                                 animate={{ width: `${loadProgress}%` }}
+                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                                style={{
+                                    boxShadow: '0 0 20px rgba(255,255,255,0.3)'
+                                }}
                             />
                         </div>
-                        <p className="mt-2 text-white/20 text-xs font-mono">{loadProgress}%</p>
+
+                        {/* Percentage - Minimal Typography */}
+                        <motion.div
+                            className="text-center"
+                            key={loadProgress}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <div className="text-[72px] font-extralight text-white tracking-tight tabular-nums leading-none">
+                                {loadProgress}
+                            </div>
+                        </motion.div>
                     </motion.div>
                 </div>
-            )}
+
+                {/* Bottom Corner - Subtle Branding */}
+                <motion.div
+                    className="absolute bottom-12 left-12"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 1 }}
+                >
+                    <div className="text-white/30 text-[11px] uppercase tracking-[0.2em] font-light">
+                        MacFix
+                    </div>
+                </motion.div>
+
+                {/* Top Corner - Frame Info */}
+                <motion.div
+                    className="absolute top-12 right-12"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 1 }}
+                >
+                    <div className="text-white/20 text-[10px] font-mono tracking-wider">
+                        {Math.floor((loadProgress / 100) * TOTAL_FRAMES)}/{TOTAL_FRAMES}
+                    </div>
+                </motion.div>
+
+                {/* Subtle Grain Texture Overlay */}
+                <div
+                    className="absolute inset-0 opacity-[0.015] pointer-events-none mix-blend-overlay"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                    }}
+                />
+            </motion.div>
 
             {/* FIXED HERO - Always fixed, fades out smoothly */}
             <motion.div

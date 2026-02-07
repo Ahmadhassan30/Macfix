@@ -68,8 +68,8 @@ export default function ProductsPage() {
             {/* Header */}
             <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
                 <div className="max-w-screen-xl mx-auto px-6 py-6 flex justify-between items-center">
-                    <Link href="/" className="text-2xl font-bold tracking-tighter">
-                        MACFIX
+                    <Link href="/" className="flex items-center">
+                        <img src="/icon.png" alt="MacFix Logo" className="h-8 w-auto" />
                     </Link>
                     <div className="flex items-center gap-8">
                         <Link href="/checkout" className="text-sm font-bold flex items-center gap-2 hover:opacity-70 transition-opacity">

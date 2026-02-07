@@ -10,8 +10,9 @@ export default function AdminLayout({
         <div className="flex h-screen bg-neutral-50 font-sans text-black">
             {/* Sidebar */}
             <aside className="w-64 bg-white border-r border-neutral-200 p-6 flex flex-col fixed h-full z-10">
-                <Link href="/admin" className="text-2xl font-bold tracking-tighter mb-12 block">
-                    MACFIX <span className="text-neutral-400 font-normal">ADMIN</span>
+                <Link href="/admin" className="flex items-center gap-3 mb-12">
+                    <img src="/icon.png" alt="MacFix Logo" className="h-8 w-auto" />
+                    <span className="text-neutral-400 font-normal text-sm">ADMIN</span>
                 </Link>
 
                 <nav className="flex-1 space-y-2">

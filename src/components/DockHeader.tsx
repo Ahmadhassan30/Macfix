@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 export default function DockHeader() {
     const { scrollY } = useScroll();
@@ -40,26 +41,14 @@ export default function DockHeader() {
                     layout
                     className={`flex items-center gap-3 pl-6 pr-2 h-full ${isScrolled ? 'pl-4' : 'pl-8'}`}
                 >
-                    <div className="relative flex items-center justify-center">
-                        <svg className={`text-white transition-all duration-300 ${isScrolled ? 'w-5 h-5' : 'w-6 h-6'}`} fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5 10 5 10-5-5-2.5-5 2.5z" />
-                        </svg>
-                    </div>
-
-                    <AnimatePresence>
-                        {!isScrolled && (
-                            <motion.span
-                                key="logo-text"
-                                initial={{ opacity: 0, width: 0, x: -10 }}
-                                animate={{ opacity: 1, width: "auto", x: 0 }}
-                                exit={{ opacity: 0, width: 0, x: -10 }}
-                                transition={{ duration: 0.2 }}
-                                className="font-bold tracking-tighter text-lg text-white whitespace-nowrap overflow-hidden"
-                            >
-                                MACFIX
-                            </motion.span>
-                        )}
-                    </AnimatePresence>
+                    <Image
+                        src="/icon.png"
+                        alt="MacFix Logo"
+                        width={isScrolled ? 32 : 40}
+                        height={isScrolled ? 32 : 40}
+                        className="transition-all duration-300"
+                        priority
+                    />
                 </motion.div>
 
                 {/* 2. CENTER: LINKS */}

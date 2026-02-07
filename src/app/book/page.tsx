@@ -103,8 +103,8 @@ export default function BookPage() {
             {/* Header */}
             <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
                 <div className="max-w-screen-xl mx-auto px-6 py-6 flex justify-between items-center">
-                    <Link href="/" className="text-2xl font-bold tracking-tighter">
-                        MACFIX
+                    <Link href="/" className="flex items-center">
+                        <img src="/icon.png" alt="MacFix Logo" className="h-8 w-auto" />
                     </Link>
                     <Link href="/" className="text-sm font-medium text-neutral-500 hover:text-black transition-colors">
                         Close
