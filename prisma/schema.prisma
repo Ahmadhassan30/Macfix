@@ -1,0 +1,93 @@
+// Prisma schema for MacFix service booking system
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Booking model for service requests
+model Booking {
+  id           String   @id @default(cuid())
+  customerName String
+  email        String
+  phone        String
+  device       String   // "MacBook Pro 2020", "MacBook Air M1", etc.
+  issue        String   @db.Text
+  status       BookingStatus @default(RECEIVED)
+  trackingCode String   @unique @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  updates      TrackingUpdate[]
+  
+  @@index([trackingCode])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Tracking updates for each booking
+model TrackingUpdate {
+  id        String   @id @default(cuid())
+  bookingId String
+  status    BookingStatus
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+  
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  @@index([bookingId])
+}
+
+// Product catalog for Mac accessories
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @db.Text
+  price       Float
+  imageUrl    String?
+  category    ProductCategory
+  inStock     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([category])
+  @@index([inStock])
+}
+
+// Admin users for managing bookings and products
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // Hashed with bcrypt
+  createdAt DateTime @default(now())
+  
+  @@index([email])
+}
+
+// Booking status enum
+enum BookingStatus {
+  RECEIVED    // Initial status when booking is created
+  DIAGNOSING  // Technician is diagnosing the issue
+  REPAIRING   // Device is being repaired
+  TESTING     // Quality testing after repair
+  READY       // Ready for pickup/delivery
+  COMPLETED   // Service completed
+  CANCELLED   // Booking cancelled
+}
+
+// Product category enum
+enum ProductCategory {
+  CHARGER
+  BATTERY
+  SCREEN
+  KEYBOARD
+  TRACKPAD
+  CABLE
+  ADAPTER
+  CASE
+  OTHER
+}

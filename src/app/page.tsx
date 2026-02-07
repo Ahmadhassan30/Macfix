@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
+import Link from 'next/link';
 import HeroAnimation from '@/components/ChipScroll';
 import DockHeader from '@/components/DockHeader';
 
@@ -179,7 +180,9 @@ export default function Home() {
                 <h2 className="text-[5vw] font-medium tracking-tight mb-12">Ready to revive your machine?</h2>
 
                 <MagneticButton className="group relative inline-flex items-center justify-center px-24 py-12 bg-white text-black rounded-full overflow-hidden transition-all duration-300 hover:scale-105">
-                    <span className="relative z-10 text-2xl font-bold tracking-tight group-hover:text-black transition-colors">START REPAIR</span>
+                    <Link href="/book">
+                        <span className="relative z-10 text-2xl font-bold tracking-tight group-hover:text-black transition-colors">START REPAIR</span>
+                    </Link>
                     <div className="absolute inset-0 bg-neutral-200 scale-0 group-hover:scale-100 transition-transform origin-center duration-500 rounded-full" />
                 </MagneticButton>
 
@@ -187,6 +190,80 @@ export default function Home() {
                     <span>San Francisco, CA</span>
                     <span>est. 2015</span>
                     <span>Authorized Provider</span>
+                </div>
+            </section>
+
+            {/* QUICK ACTIONS SECTION */}
+            <section className="py-32 bg-gradient-to-b from-black to-neutral-950">
+                <div className="container mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="text-center mb-16"
+                    >
+                        <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
+                            Get Started
+                        </h2>
+                        <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+                            Book a repair, track your device, or browse our premium accessories
+                        </p>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        {[
+                            {
+                                title: 'Book Repair',
+                                description: 'Schedule your MacBook repair service with our expert technicians',
+                                icon: '🔧',
+                                href: '/book',
+                                gradient: 'from-blue-600 to-blue-700'
+                            },
+                            {
+                                title: 'Track Status',
+                                description: 'Check the real-time status of your device repair',
+                                icon: '📍',
+                                href: '/track',
+                                gradient: 'from-purple-600 to-purple-700'
+                            },
+                            {
+                                title: 'Shop Parts',
+                                description: 'Browse genuine Apple parts and premium accessories',
+                                icon: '🛍️',
+                                href: '/products',
+                                gradient: 'from-emerald-600 to-emerald-700'
+                            }
+                        ].map((action, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1, duration: 0.6 }}
+                            >
+                                <Link href={action.href}>
+                                    <div className="group h-full bg-neutral-900 border border-neutral-800 rounded-2xl p-8 hover:border-blue-500/50 transition-all cursor-pointer">
+                                        <div className={`w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br ${action.gradient} flex items-center justify-center text-3xl group-hover:scale-110 transition-transform`}>
+                                            {action.icon}
+                                        </div>
+                                        <h3 className="text-2xl font-bold mb-3 group-hover:text-blue-400 transition-colors">
+                                            {action.title}
+                                        </h3>
+                                        <p className="text-neutral-400 mb-6">
+                                            {action.description}
+                                        </p>
+                                        <div className="flex items-center text-blue-400 font-semibold group-hover:translate-x-2 transition-transform">
+                                            Get Started
+                                            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
