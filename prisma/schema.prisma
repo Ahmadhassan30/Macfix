@@ -2,6 +2,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -53,6 +54,8 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  orderItems  OrderItem[]
+  
   @@index([category])
   @@index([inStock])
 }
@@ -90,4 +93,44 @@ enum ProductCategory {
   ADAPTER
   CASE
   OTHER
+}
+
+// Order system
+model Order {
+  id           String      @id @default(cuid())
+  customerName String
+  email        String
+  phone        String
+  address      String
+  city         String
+  zip          String
+  country      String
+  total        Float
+  status       OrderStatus @default(PENDING)
+  items        OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  @@index([email])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float // Price at purchase
+  
+  @@index([orderId])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }

@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const app = new Hono().basePath('/api');
 
@@ -30,9 +30,10 @@ const createBookingSchema = z.object({
 });
 
 // POST /api/bookings - Create new booking
-app.post('/bookings', zValidator('json', createBookingSchema), async (c) => {
+app.post('/bookings', async (c) => {
     try {
-        const data = c.req.valid('json');
+        const body = await c.req.json();
+        const data = createBookingSchema.parse(body);
 
         const booking = await prisma.booking.create({
             data: {
@@ -103,6 +104,103 @@ app.get('/bookings/track/:code', async (c) => {
     } catch (error) {
         console.error('Error tracking booking:', error);
         return c.json({ success: false, error: 'Failed to track booking' }, 500);
+    }
+});
+
+
+// Create product schema
+const createProductSchema = z.object({
+    name: z.string().min(2),
+    description: z.string(),
+    price: z.number().positive(),
+    category: z.enum(['CHARGER', 'BATTERY', 'SCREEN', 'KEYBOARD', 'TRACKPAD', 'CABLE', 'ADAPTER', 'CASE', 'OTHER']),
+    inStock: z.boolean(),
+    imageUrl: z.string().optional().nullable(),
+});
+
+// POST /api/products - Create new product
+app.post('/products', async (c) => {
+    try {
+        const body = await c.req.json();
+        const data = createProductSchema.parse(body);
+
+        const product = await prisma.product.create({
+            data: {
+                ...data,
+                imageUrl: data.imageUrl || null,
+            },
+        });
+
+        return c.json({ success: true, product }, 201);
+    } catch (error) {
+        console.error('Error creating product:', error);
+        return c.json({ success: false, error: 'Failed to create product' }, 500);
+    }
+});
+
+
+// Create order schema
+const createOrderSchema = z.object({
+    customerName: z.string().min(2),
+    email: z.string().email(),
+    phone: z.string().min(10),
+    address: z.string().min(5),
+    city: z.string().min(2),
+    zip: z.string().min(3),
+    country: z.string().min(2),
+    items: z.array(z.object({
+        productId: z.string(),
+        quantity: z.number().int().positive()
+    })),
+});
+
+// POST /api/orders - Create new order
+app.post('/orders', async (c) => {
+    try {
+        const body = await c.req.json();
+        const data = createOrderSchema.parse(body);
+
+        // Fetch products to calculate total
+        const productIds = data.items.map(item => item.productId);
+        const products = await prisma.product.findMany({
+            where: { id: { in: productIds } }
+        });
+
+        let total = 0;
+        const orderItemsData = [];
+
+        for (const item of data.items) {
+            const product = products.find(p => p.id === item.productId);
+            if (!product) throw new Error(`Product not found: ${item.productId}`);
+
+            total += product.price * item.quantity;
+            orderItemsData.push({
+                productId: item.productId,
+                quantity: item.quantity,
+                price: product.price
+            });
+        }
+
+        const order = await prisma.order.create({
+            data: {
+                customerName: data.customerName,
+                email: data.email,
+                phone: data.phone,
+                address: data.address,
+                city: data.city,
+                zip: data.zip,
+                country: data.country,
+                total: total,
+                items: {
+                    create: orderItemsData
+                }
+            }
+        });
+
+        return c.json({ success: true, orderId: order.id }, 201);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        return c.json({ success: false, error: 'Failed to create order' }, 500);
     }
 });
 

@@ -46,51 +46,48 @@ export default function BookPage() {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+            <div className="min-h-screen bg-white text-black flex items-center justify-center px-6 font-sans selection:bg-blue-100">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="max-w-2xl w-full text-center"
                 >
-                    <div className="mb-8">
-                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mb-10">
+                        <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-blue-50 flex items-center justify-center">
+                            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
-                            Booking Confirmed!
+                        <h1 className="text-6xl font-bold mb-6 tracking-tighter text-black">
+                            Confirmed.
                         </h1>
-                        <p className="text-neutral-400 text-lg mb-8">
-                            Your device repair has been scheduled. We&apos;ll take great care of it.
+                        <p className="text-neutral-500 text-xl font-light">
+                            Your recovery sequence has been initiated.
                         </p>
                     </div>
 
-                    <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 border border-neutral-800 rounded-2xl p-8 mb-8">
-                        <p className="text-sm text-neutral-500 uppercase tracking-wider mb-3">Your Tracking Code</p>
-                        <div className="text-4xl font-mono font-bold text-blue-400 mb-4 tracking-wider">
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-3xl p-10 mb-10 shadow-sm">
+                        <p className="text-xs font-mono text-neutral-400 uppercase tracking-widest mb-4">Tracking Identifier</p>
+                        <div className="text-5xl font-mono font-bold text-blue-600 tracking-tight">
                             {trackingCode}
                         </div>
-                        <p className="text-sm text-neutral-400">
-                            Save this code to track your repair status
-                        </p>
                     </div>
 
-                    <div className="flex gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link href={`/track?code=${trackingCode}`}>
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-semibold hover:from-blue-500 hover:to-blue-600 transition-all"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-10 py-4 bg-black text-white rounded-full font-medium hover:bg-neutral-800 transition-colors w-full sm:w-auto"
                             >
                                 Track Status
                             </motion.button>
                         </Link>
                         <Link href="/">
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-8 py-4 bg-neutral-900 border border-neutral-700 rounded-xl font-semibold hover:bg-neutral-800 transition-all"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-10 py-4 bg-white border border-neutral-200 text-black rounded-full font-medium hover:bg-neutral-50 transition-colors w-full sm:w-auto"
                             >
                                 Back Home
                             </motion.button>
@@ -102,34 +99,39 @@ export default function BookPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white">
+        <div className="min-h-screen bg-white text-black font-sans selection:bg-neutral-100">
             {/* Header */}
-            <div className="border-b border-neutral-900">
-                <div className="max-w-4xl mx-auto px-6 py-6">
-                    <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
+            <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
+                <div className="max-w-screen-xl mx-auto px-6 py-6 flex justify-between items-center">
+                    <Link href="/" className="text-2xl font-bold tracking-tighter">
                         MACFIX
+                    </Link>
+                    <Link href="/" className="text-sm font-medium text-neutral-500 hover:text-black transition-colors">
+                        Close
                     </Link>
                 </div>
             </div>
 
             {/* Form */}
-            <div className="max-w-4xl mx-auto px-6 py-20">
+            <div className="max-w-3xl mx-auto px-6 pt-40 pb-20">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-white to-blue-400 bg-clip-text text-transparent">
-                        Book a Repair
+                    <span className="text-blue-600 font-mono text-sm tracking-widest uppercase mb-4 block">Service Request</span>
+                    <h1 className="text-6xl md:text-7xl font-bold mb-6 tracking-tighter text-black leading-[0.9]">
+                        Let&apos;s get you<br />
+                        back online.
                     </h1>
-                    <p className="text-xl text-neutral-400 mb-12">
-                        Professional MacBook repair service. Get your device fixed by experts.
+                    <p className="text-xl text-neutral-500 mb-16 font-light max-w-xl leading-relaxed">
+                        Fill in the details below. Our technicians are ready to diagnose and resurrect your machine.
                     </p>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Name */}
-                        <div>
-                            <label className="block text-sm font-medium text-neutral-300 mb-2">
+                        <div className="group">
+                            <label className="block text-sm font-medium text-neutral-900 mb-3 ml-1">
                                 Full Name
                             </label>
                             <input
@@ -137,15 +139,15 @@ export default function BookPage() {
                                 required
                                 value={formData.customerName}
                                 onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                                className="w-full px-4 py-4 bg-neutral-900 border border-neutral-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                                placeholder="John Doe"
+                                className="w-full px-6 py-5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-blue-500 focus:ring-0 outline-none transition-all text-lg placeholder:text-neutral-300 hover:bg-neutral-100/50 focus:bg-white"
+                                placeholder="Steve Jobs"
                             />
                         </div>
 
                         {/* Email & Phone */}
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-neutral-300 mb-2">
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="group">
+                                <label className="block text-sm font-medium text-neutral-900 mb-3 ml-1">
                                     Email Address
                                 </label>
                                 <input
@@ -153,12 +155,12 @@ export default function BookPage() {
                                     required
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-4 bg-neutral-900 border border-neutral-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                                    placeholder="john@example.com"
+                                    className="w-full px-6 py-5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-blue-500 focus:ring-0 outline-none transition-all text-lg placeholder:text-neutral-300 hover:bg-neutral-100/50 focus:bg-white"
+                                    placeholder="steve@apple.com"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-neutral-300 mb-2">
+                            <div className="group">
+                                <label className="block text-sm font-medium text-neutral-900 mb-3 ml-1">
                                     Phone Number
                                 </label>
                                 <input
@@ -166,68 +168,83 @@ export default function BookPage() {
                                     required
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                    className="w-full px-4 py-4 bg-neutral-900 border border-neutral-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                    className="w-full px-6 py-5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-blue-500 focus:ring-0 outline-none transition-all text-lg placeholder:text-neutral-300 hover:bg-neutral-100/50 focus:bg-white"
                                     placeholder="+1 (555) 000-0000"
                                 />
                             </div>
                         </div>
 
                         {/* Device */}
-                        <div>
-                            <label className="block text-sm font-medium text-neutral-300 mb-2">
+                        <div className="group">
+                            <label className="block text-sm font-medium text-neutral-900 mb-3 ml-1">
                                 Device Model
                             </label>
-                            <select
-                                required
-                                value={formData.device}
-                                onChange={(e) => setFormData({ ...formData, device: e.target.value })}
-                                className="w-full px-4 py-4 bg-neutral-900 border border-neutral-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                            >
-                                <option value="">Select your MacBook model</option>
-                                <option value="MacBook Air M1 (2020)">MacBook Air M1 (2020)</option>
-                                <option value="MacBook Air M2 (2022)">MacBook Air M2 (2022)</option>
-                                <option value="MacBook Air M3 (2024)">MacBook Air M3 (2024)</option>
-                                <option value="MacBook Pro 13-inch M1 (2020)">MacBook Pro 13-inch M1 (2020)</option>
-                                <option value="MacBook Pro 14-inch M1 Pro/Max (2021)">MacBook Pro 14-inch M1 Pro/Max (2021)</option>
-                                <option value="MacBook Pro 16-inch M1 Pro/Max (2021)">MacBook Pro 16-inch M1 Pro/Max (2021)</option>
-                                <option value="MacBook Pro 14-inch M3 (2023)">MacBook Pro 14-inch M3 (2023)</option>
-                                <option value="MacBook Pro 16-inch M3 (2023)">MacBook Pro 16-inch M3 (2023)</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <div className="relative">
+                                <select
+                                    required
+                                    value={formData.device}
+                                    onChange={(e) => setFormData({ ...formData, device: e.target.value })}
+                                    className="w-full px-6 py-5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-blue-500 focus:ring-0 outline-none transition-all text-lg appearance-none hover:bg-neutral-100/50 focus:bg-white cursor-pointer"
+                                >
+                                    <option value="">Select your MacBook model</option>
+                                    <option value="MacBook Air M1 (2020)">MacBook Air M1 (2020)</option>
+                                    <option value="MacBook Air M2 (2022)">MacBook Air M2 (2022)</option>
+                                    <option value="MacBook Air M3 (2024)">MacBook Air M3 (2024)</option>
+                                    <option value="MacBook Pro 13-inch M1 (2020)">MacBook Pro 13-inch M1 (2020)</option>
+                                    <option value="MacBook Pro 14-inch M1 Pro/Max (2021)">MacBook Pro 14-inch M1 Pro/Max (2021)</option>
+                                    <option value="MacBook Pro 16-inch M1 Pro/Max (2021)">MacBook Pro 16-inch M1 Pro/Max (2021)</option>
+                                    <option value="MacBook Pro 14-inch M3 (2023)">MacBook Pro 14-inch M3 (2023)</option>
+                                    <option value="MacBook Pro 16-inch M3 (2023)">MacBook Pro 16-inch M3 (2023)</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Issue */}
-                        <div>
-                            <label className="block text-sm font-medium text-neutral-300 mb-2">
-                                Describe the Issue
+                        <div className="group">
+                            <label className="block text-sm font-medium text-neutral-900 mb-3 ml-1">
+                                Diagnosis / Issue
                             </label>
                             <textarea
                                 required
-                                rows={6}
+                                rows={5}
                                 value={formData.issue}
                                 onChange={(e) => setFormData({ ...formData, issue: e.target.value })}
-                                className="w-full px-4 py-4 bg-neutral-900 border border-neutral-800 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all resize-none"
-                                placeholder="Please describe the problem in detail..."
+                                className="w-full px-6 py-5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-blue-500 focus:ring-0 outline-none transition-all text-lg placeholder:text-neutral-300 resize-none hover:bg-neutral-100/50 focus:bg-white"
+                                placeholder="Describe the symptoms..."
                             />
                         </div>
 
                         {/* Error Message */}
                         {error && (
-                            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400">
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-medium"
+                            >
                                 {error}
-                            </div>
+                            </motion.div>
                         )}
 
                         {/* Submit Button */}
-                        <motion.button
-                            type="submit"
-                            disabled={loading}
-                            whileHover={{ scale: loading ? 1 : 1.02 }}
-                            whileTap={{ scale: loading ? 1 : 0.98 }}
-                            className="w-full px-8 py-5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl font-bold text-lg hover:from-blue-500 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? 'Submitting...' : 'Submit Booking'}
-                        </motion.button>
+                        <div className="pt-8">
+                            <motion.button
+                                type="submit"
+                                disabled={loading}
+                                whileHover={{ scale: loading ? 1 : 1.02 }}
+                                whileTap={{ scale: loading ? 1 : 0.98 }}
+                                className="w-full px-8 py-6 bg-black text-white rounded-full font-bold text-xl hover:bg-neutral-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                            >
+                                {loading ? (
+                                    <>Processing <span className="animate-pulse">...</span></>
+                                ) : (
+                                    <>Initiate Repair Sequence</>
+                                )}
+                            </motion.button>
+                        </div>
                     </form>
                 </motion.div>
             </div>
