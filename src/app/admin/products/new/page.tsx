@@ -66,7 +66,7 @@ export default function AddProductPage() {
                         </svg>
                     </div>
                     <h1 className="text-3xl font-bold mb-4 tracking-tight">Product Added</h1>
-                    <p className="text-neutral-500 mb-8">"{formData.name}" has been added to the catalog.</p>
+                    <p className="text-neutral-500 mb-8">&quot;{formData.name}&quot; has been added to the catalog.</p>
                     <div className="flex gap-4 justify-center">
                         <button
                             onClick={() => {

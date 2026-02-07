@@ -61,7 +61,7 @@ export default function CheckoutPage() {
                 <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md w-full">
                     <div className="text-6xl mb-4">🛒</div>
                     <h1 className="text-2xl font-bold mb-2">Your Bag is Empty</h1>
-                    <p className="text-neutral-500 mb-6">Looks like you haven't added any repair parts yet.</p>
+                    <p className="text-neutral-500 mb-6">Looks like you haven&apos;t added any repair parts yet.</p>
                     <Link href="/products" className="block w-full py-3 bg-black text-white rounded-full font-bold hover:bg-neutral-800 transition-all">
                         Browse Products
                     </Link>

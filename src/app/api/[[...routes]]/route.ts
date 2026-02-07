@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
+import { sendEmail } from '@/lib/email';
 
 export const runtime = 'nodejs';
 
@@ -51,7 +52,24 @@ app.post('/bookings', async (c) => {
             },
         });
 
-        // TODO: Send confirmation email
+        // Send confirmation email
+        const trackUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/track?code=${booking.trackingCode}`;
+
+        await sendEmail({
+            to: booking.email,
+            subject: `Booking Confirmed - ${booking.device}`,
+            html: `
+                <div style="font-family: sans-serif; max-w: 600px; margin: 0 auto;">
+                    <h1>We've received your request!</h1>
+                    <p>Hi ${booking.customerName},</p>
+                    <p>Thanks for booking a generic repair for your <strong>${booking.device}</strong>.</p>
+                    <p><strong>Ref Code:</strong> ${booking.trackingCode}</p>
+                    <p>We will inspect the device and update you shortly.</p>
+                    <br/>
+                    <a href="${trackUrl}" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Track Progress</a>
+                </div>
+            `
+        });
 
         return c.json({
             success: true,
@@ -66,6 +84,9 @@ app.post('/bookings', async (c) => {
             },
         }, 201);
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            return c.json({ success: false, error: error.issues[0].message }, 400);
+        }
         console.error('Error creating booking:', error);
         return c.json({ success: false, error: 'Failed to create booking' }, 500);
     }
@@ -75,6 +96,7 @@ app.post('/bookings', async (c) => {
 app.get('/bookings/track/:code', async (c) => {
     try {
         const trackingCode = c.req.param('code');
+        console.log(`Tracking request for code: ${trackingCode}`);
 
         const booking = await prisma.booking.findUnique({
             where: { trackingCode },
@@ -86,6 +108,7 @@ app.get('/bookings/track/:code', async (c) => {
         });
 
         if (!booking) {
+            console.log(`Booking not found for code: ${trackingCode}`);
             return c.json({ success: false, error: 'Booking not found' }, 404);
         }
 
@@ -101,9 +124,66 @@ app.get('/bookings/track/:code', async (c) => {
             },
             updates: booking.updates,
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error tracking booking:', error);
-        return c.json({ success: false, error: 'Failed to track booking' }, 500);
+        return c.json({ success: false, error: error.message || 'Failed to track booking' }, 500);
+    }
+});
+
+
+// Update booking schema
+const updateBookingSchema = z.object({
+    status: z.enum(['RECEIVED', 'DIAGNOSING', 'REPAIRING', 'TESTING', 'READY', 'COMPLETED', 'CANCELLED']),
+    message: z.string().min(2, 'Message required'),
+    notify: z.boolean().default(true),
+});
+
+// POST /api/bookings/:id/updates - Add update to booking
+app.post('/bookings/:id/updates', async (c) => {
+    try {
+        const id = c.req.param('id');
+        const body = await c.req.json();
+        const data = updateBookingSchema.parse(body);
+
+        // Update booking status and add tracking entry
+        const booking = await prisma.booking.update({
+            where: { id },
+            data: {
+                status: data.status,
+                updates: {
+                    create: {
+                        status: data.status,
+                        message: data.message
+                    }
+                }
+            }
+        });
+
+        if (data.notify && booking.email) {
+            const trackUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/track?code=${booking.trackingCode}`;
+
+            await sendEmail({
+                to: booking.email,
+                subject: `Update: Your ${booking.device} is ${data.status}`,
+                html: `
+                    <div style="font-family: sans-serif; max-w: 600px; margin: 0 auto;">
+                        <h1 style="color: #333;">Status Updated: ${data.status}</h1>
+                        <p>Hi ${booking.customerName},</p>
+                        <p>${data.message}</p>
+                        <br/>
+                        <a href="${trackUrl}" style="background: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">View Details</a>
+                    </div>
+                `
+            });
+        }
+
+        return c.json({ success: true, booking });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return c.json({ success: false, error: error.issues[0].message }, 400);
+        }
+        console.error('Error updating booking:', error);
+        return c.json({ success: false, error: 'Failed to update booking' }, 500);
     }
 });
 

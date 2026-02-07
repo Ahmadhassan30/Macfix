@@ -55,9 +55,14 @@ export default async function AdminBookingsPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         {/* TODO: Add Edit/Update functionality */}
-                                        <Link href={`/track?code=${booking.trackingCode}`} className="text-blue-600 hover:underline text-sm font-medium mr-4" target="_blank">
-                                            View
-                                        </Link>
+                                        <div className="flex items-center gap-4">
+                                            <Link href={`/admin/bookings/${booking.id}`} className="text-black hover:underline text-sm font-bold bg-neutral-100 px-3 py-1 rounded-full">
+                                                Manage
+                                            </Link>
+                                            <Link href={`/track?code=${booking.trackingCode}`} className="text-blue-600 hover:underline text-sm font-medium" target="_blank">
+                                                Track
+                                            </Link>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
