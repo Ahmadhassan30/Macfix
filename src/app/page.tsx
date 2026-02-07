@@ -109,7 +109,6 @@ export default function Home() {
 
             {/* 4. IMMERSIVE STATS SPEED SECTION */}
             <section className="relative h-[80vh] flex items-center bg-white text-black overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10"></div> {/* Optional noise texture */}
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
                         <div>
