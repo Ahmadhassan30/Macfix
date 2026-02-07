@@ -266,19 +266,26 @@ export default function HeroAnimation() {
                 </div>
             )}
 
-            {/* FIXED HERO - Stays in place while scrolling */}
-            <div
-                className={`${animationComplete ? 'relative' : 'fixed'} inset-0 w-full h-screen z-40`}
+            {/* FIXED HERO - Always fixed, fades out smoothly */}
+            <motion.div
+                className="fixed inset-0 w-full h-screen z-40"
                 style={{
                     background: 'linear-gradient(to bottom, #87CEFA 0%, #1E90FF 25%, #000000 60%)',
-                    willChange: animationComplete ? 'auto' : 'transform' // Performance hint
+                    pointerEvents: animationComplete ? 'none' : 'auto'
+                }}
+                animate={{
+                    opacity: animationComplete ? 0 : 1,
+                    scale: animationComplete ? 0.95 : 1
+                }}
+                transition={{
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1]
                 }}
             >
                 {/* 1. LAYER ONE: HERO TEXT (Behind Laptop) */}
                 <motion.div
                     className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-0"
                     animate={{ opacity: currentFrame < 20 ? 1 : 0, scale: currentFrame < 20 ? 1 : 0.95 }}
-                    transition={{ duration: 0.8 }}
                 >
                     {imagesLoaded && (
                         <motion.h1
@@ -340,7 +347,7 @@ export default function HeroAnimation() {
                         />
                     </div>
                 </motion.div>
-            </div>
+            </motion.div>
 
             {/* SPACER - Creates scroll distance for the animation */}
             <div style={{ height: `${SCROLL_DISTANCE}px` }} className="bg-black" />

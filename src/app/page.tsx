@@ -51,7 +51,13 @@ export default function Home() {
             <HeroAnimation />
 
             {/* 2. BOLD MANIFESTO SECTION */}
-            <section className="relative min-h-screen flex items-center justify-center py-40 px-6">
+            <motion.section
+                className="relative min-h-screen flex items-center justify-center py-40 px-6 pt-20"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
                 <div className="max-w-[1600px] mx-auto w-full">
                     <motion.h2
                         initial={{ opacity: 0, y: 100 }}
@@ -72,13 +78,13 @@ export default function Home() {
                             transition={{ delay: 0.4, duration: 1 }}
                             className="text-2xl md:text-3xl font-light text-neutral-400 max-w-2xl leading-relaxed tracking-tight"
                         >
-                            We don’t just fix devices. We resurrect technology. <br />
+                            We don't just fix devices. We resurrect technology. <br />
                             Every screw tuned. Every pixel perfect. <br />
                             <span className="text-white">The gold standard in MacBook restoration.</span>
                         </motion.p>
                     </div>
                 </div>
-            </section>
+            </motion.section>
 
             {/* 3. SERVICE LIST - TYPOGRAPHIC LAYOUT */}
             <section className="py-40 border-t border-neutral-900">
