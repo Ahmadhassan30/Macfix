@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
-// NEW IMAGE CONFIGURATION
+// IMAGE CONFIGURATION
 const TOTAL_FRAMES = 192;
-const FRAME_PATH = '/sequences/frame_'; // Updated path
-const FRAME_EXTENSION = '.webp';        // Updated extension
-const FRAME_PADDING = 5;                // 5 digits: 00001, 00002, etc.
-const SCROLL_DISTANCE = 3000;           // Adjusted for 192 frames
+const FRAME_PATH = '/sequences/frame_';
+const FRAME_EXTENSION = '.webp';
+const FRAME_PADDING = 5;
+const SCROLL_DISTANCE = 3000;
 
 export default function HeroAnimation() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,97 +18,143 @@ export default function HeroAnimation() {
     const [currentFrame, setCurrentFrame] = useState(0);
     const [animationComplete, setAnimationComplete] = useState(false);
 
-    // Optimized Loading Strategy
+    // Refs for smooth animation
+    const frameRef = useRef(0);
+    const rafRef = useRef<number>();
+    const lastDrawnFrameRef = useRef(-1);
+
+    // Optimized image loading with progress tracking
     useEffect(() => {
         let isMounted = true;
+        const loadedImages: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+        let loadedCount = 0;
 
-        // Priority: Load first frame immediately to unlock UI
-        const loadFirstFrame = async () => {
-            const img = new Image();
-            const frameNumber = '00001';
-            img.src = `${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`;
-
-            await new Promise<void>((resolve) => {
-                img.onload = () => resolve();
-                img.onerror = () => resolve(); // Proceed even if error
-            });
-
-            if (isMounted) {
-                setImages(prev => {
-                    const newImages = [...prev];
-                    newImages[0] = img;
-                    return newImages;
-                });
-                setImagesLoaded(true); // UNLOCK UI IMMEDIATELY
-            }
+        const updateProgress = () => {
+            const progress = Math.floor((loadedCount / TOTAL_FRAMES) * 100);
+            setLoadProgress(progress);
         };
 
-        // Background: Load the rest
-        const loadRemainingFrames = async () => {
-            const loadedImages: HTMLImageElement[] = [];
-            // Initialize array
-            for (let i = 0; i < TOTAL_FRAMES; i++) loadedImages[i] = new Image();
+        // Load first frame with priority
+        const loadFirstFrame = async () => {
+            const img = new Image();
+            img.src = `${FRAME_PATH}${'00001'}${FRAME_EXTENSION}`;
 
-            let loadedCount = 0;
-
-            for (let i = 0; i < TOTAL_FRAMES; i++) {
-                if (!isMounted) break;
-                if (i === 0) continue; // Skip first (already doing it)
-
-                const img = new Image();
-                const frameNumber = String(i + 1).padStart(FRAME_PADDING, '0');
-                img.src = `${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`;
-
+            return new Promise<void>((resolve) => {
                 img.onload = () => {
-                    if (!isMounted) return;
-                    setImages(prev => {
-                        const next = [...prev];
-                        next[i] = img;
-                        return next;
-                    });
+                    if (isMounted) {
+                        loadedImages[0] = img;
+                        loadedCount++;
+                        updateProgress();
+                        setImages([...loadedImages]);
+                        setImagesLoaded(true); // Unlock UI immediately
+                    }
+                    resolve();
                 };
+                img.onerror = () => resolve();
+            });
+        };
+
+        // Load remaining frames in batches for better performance
+        const loadRemainingFrames = async () => {
+            const batchSize = 10;
+
+            for (let batch = 0; batch < Math.ceil((TOTAL_FRAMES - 1) / batchSize); batch++) {
+                if (!isMounted) break;
+
+                const promises = [];
+                const start = batch * batchSize + 1;
+                const end = Math.min(start + batchSize, TOTAL_FRAMES);
+
+                for (let i = start; i < end; i++) {
+                    const img = new Image();
+                    const frameNumber = String(i + 1).padStart(FRAME_PADDING, '0');
+                    img.src = `${FRAME_PATH}${frameNumber}${FRAME_EXTENSION}`;
+
+                    const promise = new Promise<void>((resolve) => {
+                        img.onload = () => {
+                            if (isMounted) {
+                                loadedImages[i] = img;
+                                loadedCount++;
+                                updateProgress();
+                            }
+                            resolve();
+                        };
+                        img.onerror = () => resolve();
+                    });
+
+                    promises.push(promise);
+                }
+
+                await Promise.all(promises);
+                if (isMounted) {
+                    setImages([...loadedImages]);
+                }
             }
         };
 
         loadFirstFrame().then(() => loadRemainingFrames());
 
-        return () => { isMounted = false; };
+        return () => {
+            isMounted = false;
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
     }, []);
 
-    // Handle scroll - map scroll position to frame
+    // Smooth scroll handling with RAF
     useEffect(() => {
-        const handleScroll = () => {
-            const scrollY = window.scrollY;
+        let ticking = false;
 
-            if (scrollY <= SCROLL_DISTANCE) {
-                // Calculate frame based on scroll position
-                const progress = scrollY / SCROLL_DISTANCE;
-                const frame = Math.min(Math.floor(progress * TOTAL_FRAMES), TOTAL_FRAMES - 1);
-                setCurrentFrame(frame);
-                setAnimationComplete(false);
-            } else {
-                // Animation is complete
-                setCurrentFrame(TOTAL_FRAMES - 1);
-                setAnimationComplete(true);
+        const handleScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+
+                    if (scrollY <= SCROLL_DISTANCE) {
+                        const progress = scrollY / SCROLL_DISTANCE;
+                        const frame = Math.min(
+                            Math.floor(progress * TOTAL_FRAMES),
+                            TOTAL_FRAMES - 1
+                        );
+                        frameRef.current = frame;
+                        setCurrentFrame(frame);
+                        setAnimationComplete(false);
+                    } else {
+                        frameRef.current = TOTAL_FRAMES - 1;
+                        setCurrentFrame(TOTAL_FRAMES - 1);
+                        setAnimationComplete(true);
+                    }
+
+                    ticking = false;
+                });
+
+                ticking = true;
             }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll(); // Initial call
+        handleScroll();
 
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
     }, []);
 
-    // Draw logic with Fallback
-    useEffect(() => {
-        // Find the best available frame
-        let frameToDraw = currentFrame;
+    // Optimized canvas rendering with RAF
+    const drawFrame = useCallback(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
 
-        // If current frame isn't loaded, fallback to nearest previous loaded frame
+        const targetFrame = frameRef.current;
+
+        // Skip if we already drew this frame
+        if (targetFrame === lastDrawnFrameRef.current) return;
+
+        // Find best available frame
+        let frameToDraw = targetFrame;
         if (!images[frameToDraw] || !images[frameToDraw].complete) {
-            // Search backwards for a loaded frame
-            for (let i = currentFrame; i >= 0; i--) {
-                if (images[i] && images[i].complete && images[i].naturalWidth > 0) {
+            for (let i = targetFrame; i >= 0; i--) {
+                if (images[i]?.complete && images[i].naturalWidth > 0) {
                     frameToDraw = i;
                     break;
                 }
@@ -116,51 +162,85 @@ export default function HeroAnimation() {
         }
 
         const img = images[frameToDraw];
-        if (!img || !img.complete || img.naturalWidth === 0) return;
+        if (!img?.complete || img.naturalWidth === 0) return;
 
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d', { alpha: true });
+        const ctx = canvas.getContext('2d', {
+            alpha: true,
+            desynchronized: true, // Better performance
+            willReadFrequently: false
+        });
         if (!ctx) return;
 
-        // Set canvas size
-        const dpr = window.devicePixelRatio || 1;
+        // Set canvas size with DPR
+        const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2 for performance
         const rect = canvas.getBoundingClientRect();
 
-        // Only resize if necessary (performance)
         if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
         }
 
-        // Contain fit
+        // Calculate dimensions (contain fit)
         const imgRatio = img.naturalWidth / img.naturalHeight;
-        const canvasRatio = canvas.width / canvas.height;
+        const canvasRatio = rect.width / rect.height;
 
         let drawW, drawH, offsetX, offsetY;
 
         if (imgRatio > canvasRatio) {
-            drawW = canvas.width;
-            drawH = canvas.width / imgRatio;
+            drawW = rect.width;
+            drawH = rect.width / imgRatio;
         } else {
-            drawH = canvas.height;
-            drawW = canvas.height * imgRatio;
+            drawH = rect.height;
+            drawW = rect.height * imgRatio;
         }
 
-        offsetX = (canvas.width - drawW) / 2;
-        offsetY = (canvas.height - drawH) / 2;
+        offsetX = (rect.width - drawW) / 2;
+        offsetY = (rect.height - drawH) / 2;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Enable image smoothing for better quality
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // Clear and draw
+        ctx.clearRect(0, 0, rect.width, rect.height);
         ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
 
-    }, [currentFrame, images]); // Removed imagesLoaded dependency
-    // Handle resize
+        lastDrawnFrameRef.current = targetFrame;
+    }, [images]);
+
+    // Continuous RAF loop for buttery smooth rendering
     useEffect(() => {
-        const handleResize = () => setCurrentFrame(prev => prev);
+        const animate = () => {
+            drawFrame();
+            rafRef.current = requestAnimationFrame(animate);
+        };
+
+        rafRef.current = requestAnimationFrame(animate);
+
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, [drawFrame]);
+
+    // Debounced resize handler
+    useEffect(() => {
+        let resizeTimeout: NodeJS.Timeout;
+
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                lastDrawnFrameRef.current = -1; // Force redraw
+                drawFrame();
+            }, 100);
+        };
+
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeout);
+        };
+    }, [drawFrame]);
 
     return (
         <>
@@ -190,7 +270,8 @@ export default function HeroAnimation() {
             <div
                 className={`${animationComplete ? 'relative' : 'fixed'} inset-0 w-full h-screen z-40`}
                 style={{
-                    background: 'linear-gradient(to bottom, #87CEFA 0%, #1E90FF 25%, #000000 60%)' // Horizon Blue Gradient
+                    background: 'linear-gradient(to bottom, #87CEFA 0%, #1E90FF 25%, #000000 60%)',
+                    willChange: animationComplete ? 'auto' : 'transform' // Performance hint
                 }}
             >
                 {/* 1. LAYER ONE: HERO TEXT (Behind Laptop) */}
@@ -200,17 +281,15 @@ export default function HeroAnimation() {
                     transition={{ duration: 0.8 }}
                 >
                     {imagesLoaded && (
-                        <>
-                            <motion.h1
-                                initial={{ opacity: 0, y: 100, scale: 0.8 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                                className="text-[18vw] font-black tracking-tighter leading-[0.8] text-transparent bg-clip-text bg-gradient-to-b from-blue-900 to-black mix-blend-overlay opacity-50"
-                                style={{ filter: 'blur(0px)' }}
-                            >
-                                MACFIX<br />PRO
-                            </motion.h1>
-                        </>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 100, scale: 0.8 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-[18vw] font-black tracking-tighter leading-[0.8] text-transparent bg-clip-text bg-gradient-to-b from-blue-900 to-black mix-blend-overlay opacity-50"
+                            style={{ filter: 'blur(0px)' }}
+                        >
+                            MACFIX<br />PRO
+                        </motion.h1>
                     )}
                 </motion.div>
 
@@ -220,6 +299,7 @@ export default function HeroAnimation() {
                         <canvas
                             ref={canvasRef}
                             className="w-full h-full object-contain drop-shadow-2xl bg-transparent mix-blend-screen"
+                            style={{ willChange: 'contents' }}
                         />
                     </div>
                 </div>
@@ -260,7 +340,6 @@ export default function HeroAnimation() {
                         />
                     </div>
                 </motion.div>
-
             </div>
 
             {/* SPACER - Creates scroll distance for the animation */}
