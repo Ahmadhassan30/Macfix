@@ -10,6 +10,9 @@ import "@uploadthing/react/styles.css";
 export const metadata: Metadata = {
     title: "MacFix Pro | Expert MacBook Repairs",
     description: "Professional MacBook repair services. Screen replacements, battery repairs, logic board fixes, and more. Fast turnaround, quality parts.",
+    icons: {
+        icon: '/icon.png',
+    },
 };
 
 export default function RootLayout({
