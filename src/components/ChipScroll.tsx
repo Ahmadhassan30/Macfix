@@ -20,7 +20,7 @@ export default function HeroAnimation() {
 
     // Refs for smooth animation
     const frameRef = useRef(0);
-    const rafRef = useRef<number>();
+    const rafRef = useRef<number | undefined>(undefined);
     const lastDrawnFrameRef = useRef(-1);
 
     // Optimized image loading with progress tracking
