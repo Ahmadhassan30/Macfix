@@ -78,7 +78,7 @@ export default function Home() {
                             transition={{ delay: 0.4, duration: 1 }}
                             className="text-2xl md:text-3xl font-light text-neutral-400 max-w-2xl leading-relaxed tracking-tight"
                         >
-                            We don't just fix devices. We resurrect technology. <br />
+                            We don&apos;t just fix devices. We resurrect technology. <br />
                             Every screw tuned. Every pixel perfect. <br />
                             <span className="text-white">The gold standard in MacBook restoration.</span>
                         </motion.p>
