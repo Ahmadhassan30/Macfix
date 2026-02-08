@@ -134,57 +134,16 @@ The application emphasizes **premium user experience**, featuring cinematic scro
 
 ## System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              CLIENT LAYER                                    │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐    │
-│   │   Landing   │   │    Book     │   │    Track    │   │   Products  │    │
-│   │    Page     │   │   Repair    │   │   Status    │   │    Store    │    │
-│   └──────┬──────┘   └──────┬──────┘   └──────┬──────┘   └──────┬──────┘    │
-│          │                 │                 │                 │           │
-│   ┌──────┴─────────────────┴─────────────────┴─────────────────┴──────┐    │
-│   │                      SHARED COMPONENTS                            │    │
-│   │  DockHeader │ ChipScroll │ MacBookScroll │ SmoothScroll │ Cart  │    │
-│   └──────────────────────────────┬────────────────────────────────────┘    │
-│                                  │                                          │
-├──────────────────────────────────┼──────────────────────────────────────────┤
-│                          CONTEXT LAYER                                      │
-│                                  │                                          │
-│   ┌──────────────────────────────┴──────────────────────────────────┐      │
-│   │                       CartContext                                │      │
-│   │         (React Context + localStorage persistence)               │      │
-│   └──────────────────────────────┬──────────────────────────────────┘      │
-│                                  │                                          │
-├──────────────────────────────────┼──────────────────────────────────────────┤
-│                              API LAYER                                      │
-│                                  │                                          │
-│   ┌──────────────────────────────┴──────────────────────────────────┐      │
-│   │                    Hono API Router                               │      │
-│   │              /api/[[...routes]]/route.ts                         │      │
-│   ├──────────────────────────────────────────────────────────────────┤      │
-│   │  POST /bookings        │  GET /bookings/track/:code              │      │
-│   │  POST /bookings/:id/updates                                      │      │
-│   │  GET  /products        │  POST /products                         │      │
-│   │  POST /orders          │  GET  /health                           │      │
-│   └──────────────────────────────┬──────────────────────────────────┘      │
-│                                  │                                          │
-├──────────────────────────────────┼──────────────────────────────────────────┤
-│                             DATA LAYER                                      │
-│                                  │                                          │
-│   ┌──────────────────────────────┴──────────────────────────────────┐      │
-│   │                      Prisma ORM                                  │      │
-│   │               @prisma/adapter-pg (Driver)                        │      │
-│   └──────────────────────────────┬──────────────────────────────────┘      │
-│                                  │                                          │
-│   ┌──────────────────────────────┴──────────────────────────────────┐      │
-│   │                     PostgreSQL                                   │      │
-│   │            (Bookings, Products, Orders, Admins)                  │      │
-│   └─────────────────────────────────────────────────────────────────┘      │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+<div align="center">
+  <img src="public/architecture-diagram.png" alt="System Architecture Diagram" width="800" />
+</div>
+
+The architecture follows a clean layered approach:
+
+- **Client Layer**: React pages (Landing, Book, Track, Products) with shared components
+- **Context Layer**: CartContext for state management with localStorage persistence
+- **API Layer**: Hono router handling all endpoints (`/bookings`, `/products`, `/orders`, `/health`)
+- **Data Layer**: Prisma ORM with PostgreSQL database
 
 ### Request Flow
 
@@ -259,48 +218,18 @@ macfix/
 
 ### Entity Relationship Diagram
 
-```
-┌──────────────────────┐         ┌──────────────────────┐
-│       Booking        │         │    TrackingUpdate    │
-├──────────────────────┤         ├──────────────────────┤
-│ id            (PK)   │────────<│ id            (PK)   │
-│ customerName         │         │ bookingId     (FK)   │
-│ email                │         │ status              │
-│ phone                │         │ message             │
-│ device               │         │ createdAt           │
-│ issue                │         └──────────────────────┘
-│ status               │
-│ trackingCode  (UQ)   │
-│ createdAt            │
-│ updatedAt            │
-└──────────────────────┘
+<div align="center">
+  <img src="public/erd-diagram.png" alt="Entity Relationship Diagram" width="800" />
+</div>
 
-┌──────────────────────┐         ┌──────────────────────┐
-│       Product        │         │      OrderItem       │
-├──────────────────────┤         ├──────────────────────┤
-│ id            (PK)   │────────<│ id            (PK)   │
-│ name                 │         │ orderId       (FK)   │
-│ description          │         │ productId     (FK)   │
-│ price                │         │ quantity            │
-│ imageUrl             │         │ price               │
-│ category             │         └──────────────────────┘
-│ inStock              │                     │
-│ createdAt            │                     │
-│ updatedAt            │                     ▼
-└──────────────────────┘         ┌──────────────────────┐
-                                 │        Order         │
-┌──────────────────────┐         ├──────────────────────┤
-│        Admin         │         │ id            (PK)   │
-├──────────────────────┤         │ customerName         │
-│ id            (PK)   │         │ email                │
-│ email         (UQ)   │         │ phone                │
-│ name                 │         │ address              │
-│ password (hashed)    │         │ city / zip / country │
-│ createdAt            │         │ total                │
-└──────────────────────┘         │ status               │
-                                 │ createdAt / updatedAt│
-                                 └──────────────────────┘
-```
+The database consists of six interconnected entities:
+
+- **Booking**: Customer repair requests with tracking codes
+- **TrackingUpdate**: Status updates linked to bookings
+- **Product**: Store inventory with categories
+- **OrderItem**: Line items linking products to orders
+- **Order**: Customer purchase records
+- **Admin**: System administrators
 
 ### Enumerations
 
