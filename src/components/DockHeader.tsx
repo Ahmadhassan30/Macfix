@@ -17,8 +17,8 @@ export default function DockHeader() {
                 onMouseLeave={() => setHoveredNav(null)}
             >
                 {/* LOGO (Text Only) */}
-                <Link href="/" className="px-6 py-2 group relative overflow-hidden rounded-full hover:bg-white/5 transition-colors">
-                    <span className="relative z-10 font-bold tracking-tighter text-lg text-white group-hover:text-neutral-200 transition-colors">
+                <Link href="/" className="px-3 md:px-6 py-2 group relative overflow-hidden rounded-full hover:bg-white/5 transition-colors">
+                    <span className="relative z-10 font-bold tracking-tighter text-sm md:text-lg text-white group-hover:text-neutral-200 transition-colors">
                         MACFIX
                     </span>
                 </Link>
@@ -27,7 +27,7 @@ export default function DockHeader() {
                 <div className="w-[1px] h-4 bg-white/10" />
 
                 {/* NAV ITEMS */}
-                <div className="flex items-center">
+                <div className="flex items-center gap-0 md:gap-1">
                     <NavItem
                         label="REPAIR"
                         href="/book"
@@ -42,7 +42,7 @@ export default function DockHeader() {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 5, scale: 0.98 }}
                                     transition={{ duration: 0.2 }}
-                                    className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[260px] bg-[#0a0a0a] border border-white/10 rounded-2xl p-2 shadow-2xl overflow-hidden"
+                                    className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[260px] bg-[#0a0a0a] border border-white/10 rounded-2xl p-2 shadow-2xl overflow-hidden hidden md:block" // Hidden on mobile to prevent layout issues
                                 >
                                     <div className="flex flex-col gap-1">
                                         {[
@@ -77,15 +77,17 @@ export default function DockHeader() {
                 </div>
 
                 {/* CTA BUTTON */}
-                <Link href="/book" className="ml-2">
+                <Link href="/book" className="ml-1 md:ml-2">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="bg-white text-black px-6 py-2.5 rounded-full text-sm font-bold tracking-tight hover:bg-neutral-200 transition-colors"
+                        className="px-4 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-sm font-bold tracking-tight whitespace-nowrap flex items-center justify-center min-w-[60px] md:min-w-[auto] bg-white text-black hover:bg-neutral-200 transition-colors"
                     >
-                        START REPAIR
+                        <span className="hidden md:block">START REPAIR</span>
+                        <span className="block md:hidden">START</span>
                     </motion.button>
                 </Link>
+
             </motion.nav>
         </div>
     );
@@ -93,12 +95,12 @@ export default function DockHeader() {
 
 const NavItem = ({ label, href, children, onMouseEnter, isActive }: any) => (
     <div
-        className="relative group px-1"
+        className="relative group px-0.5 md:px-1"
         onMouseEnter={onMouseEnter}
     >
         <Link
             href={href}
-            className={`relative z-10 block px-5 py-2.5 rounded-full text-xs font-mono tracking-widest transition-all duration-300 ${isActive ? 'text-white bg-white/10' : 'text-neutral-400 hover:text-white hover:bg-white/5'}`}
+            className={`relative z-10 block px-3 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-mono tracking-widest transition-all duration-300 ${isActive ? 'text-white bg-white/10' : 'text-neutral-400 hover:text-white hover:bg-white/5'}`}
         >
             {label}
         </Link>

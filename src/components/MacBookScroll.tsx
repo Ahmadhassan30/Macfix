@@ -34,12 +34,17 @@ export default function MacBookScroll() {
         // 1. Preload images
         for (let i = 0; i < frameCount; i++) {
             const img = new Image();
+            if (i === 0) {
+                img.onload = () => {
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+            }
             img.src = currentFrame(i);
             images.push(img);
         }
 
         // 2. GSAP Animation
-        // We use a timeline to sequence the frame updates
         const tl = gsap.to(airpods, {
             frame: frameCount - 1,
             snap: "frame",
@@ -50,21 +55,17 @@ export default function MacBookScroll() {
                 end: "+=300%", // 300% scroll distance
                 scrub: 0.5,
                 pin: true,
+                fastScrollEnd: true,
+                preventOverlaps: true,
             },
             onUpdate: () => {
                 const frameIndex = Math.round(airpods.frame);
                 if (images[frameIndex] && images[frameIndex].complete) {
                     context.clearRect(0, 0, canvas.width, canvas.height);
-                    context.drawImage(images[frameIndex], 0, 0);
+                    context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
                 }
             },
         });
-
-        // 3. Initial render
-        images[0].onload = () => {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(images[0], 0, 0);
-        };
 
         return () => {
             tl.kill();
@@ -73,13 +74,13 @@ export default function MacBookScroll() {
     }, []);
 
     return (
-        <div ref={containerRef} className="relative h-screen w-full bg-black">
+        <div ref={containerRef} className="relative h-screen w-full bg-black z-20">
             <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-                <div className="absolute top-20 text-center z-10 pointer-events-none mix-blend-difference">
-                    <h2 className="text-white text-5xl md:text-6xl font-bold tracking-tighter">
+                <div className="absolute top-[15%] md:top-20 text-center z-30 pointer-events-none mix-blend-difference px-4">
+                    <h2 className="text-white text-[12vw] md:text-6xl font-bold tracking-tighter leading-none">
                         PRECISION<br />RESTORATION
                     </h2>
-                    <p className="text-neutral-400 mt-4 text-lg font-light tracking-wide">
+                    <p className="text-neutral-400 mt-4 text-sm md:text-lg font-light tracking-wide max-w-xs mx-auto">
                         Every detail perfected. Every component renewed.
                     </p>
                 </div>
@@ -87,7 +88,7 @@ export default function MacBookScroll() {
                     ref={canvasRef}
                     width={1158}
                     height={770}
-                    className="max-w-[80vw] max-h-[80vh] object-contain"
+                    className="w-[90vw] md:max-w-[80vw] max-h-[70vh] object-contain"
                 />
             </div>
         </div>
