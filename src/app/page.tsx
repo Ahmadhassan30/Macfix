@@ -180,16 +180,16 @@ export default function Home() {
             <section className="h-screen flex flex-col items-center justify-center text-center px-6">
                 <h2 className="text-[5vw] font-medium tracking-tight mb-12">Ready to revive your machine?</h2>
 
-                <MagneticButton className="group relative inline-flex items-center justify-center px-24 py-12 bg-white text-black rounded-full overflow-hidden transition-all duration-300 hover:scale-105">
+                <MagneticButton className="group relative inline-flex items-center justify-center px-10 py-4 bg-white text-black rounded-full overflow-hidden transition-all duration-300 hover:scale-105">
                     <Link href="/book">
-                        <span className="relative z-10 text-2xl font-bold tracking-tight group-hover:text-black transition-colors">START REPAIR</span>
+                        <span className="relative z-10 text-lg font-bold tracking-tight group-hover:text-black transition-colors">START REPAIR</span>
                     </Link>
                     <div className="absolute inset-0 bg-neutral-200 scale-0 group-hover:scale-100 transition-transform origin-center duration-500 rounded-full" />
                 </MagneticButton>
 
                 <div className="mt-24 flex justify-between w-full max-w-4xl text-sm font-mono text-neutral-500 uppercase tracking-widest">
-                    <span>San Francisco, CA</span>
-                    <span>est. 2015</span>
+                    <span>Lahore, Pakistan</span>
+                    <span>est. 2025</span>
                     <span>Authorized Provider</span>
                 </div>
             </section>
@@ -291,8 +291,23 @@ export default function Home() {
             <MacBookScroll />
 
             {/* FOOTER */}
-            <footer className="py-12 border-t border-neutral-900 text-center">
+            <footer className="relative py-12 border-t border-neutral-900 text-center">
                 <h1 className="text-[15vw] font-black tracking-tighter leading-none text-neutral-900 select-none">MACFIX PRO</h1>
+
+                <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 text-[10px] md:text-xs font-mono text-neutral-500 tracking-widest uppercase opacity-80">
+                    © {new Date().getFullYear()} MacFix. All Rights Reserved.
+                </div>
+
+                <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8">
+                    <a
+                        href="https://ahmadhassan.engineer/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] md:text-xs font-mono text-neutral-400 hover:text-white transition-colors tracking-widest uppercase opacity-80 hover:opacity-100"
+                    >
+                        Design & Code by Ahmad Hassan
+                    </a>
+                </div>
             </footer>
         </main>
     );

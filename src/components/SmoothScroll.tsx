@@ -6,13 +6,14 @@ import Lenis from 'lenis';
 export default function SmoothScrolling() {
     useEffect(() => {
         const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Smooth custom easing
+            duration: 1.5, // Increased from 1.2 for more float/glide
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             orientation: 'vertical',
             gestureOrientation: 'vertical',
             smoothWheel: true,
-            wheelMultiplier: 1,
-            touchMultiplier: 2,
+            wheelMultiplier: 0.8, // Slightly lower for more control
+            touchMultiplier: 1.5, // Natural feel on touch
+            infinite: false,
         });
 
         function raf(time: number) {
