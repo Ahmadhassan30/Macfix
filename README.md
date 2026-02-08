@@ -14,7 +14,7 @@
 
 **A next-generation, award-winning repair booking and tracking system built with cutting-edge web technologies.**
 
-[Live Demo](#demo) | [Documentation](#documentation) | [Architecture](#architecture) | [API Reference](#api-reference)
+[Live Demo](https://macfixx.vercel.app/) | [Documentation](#documentation) | [Architecture Diagram](#system-architecture) | [API Reference](#api-reference)
 
 <br />
 
