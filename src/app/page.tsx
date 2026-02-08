@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'fram
 import Link from 'next/link';
 import HeroAnimation from '@/components/ChipScroll';
 import DockHeader from '@/components/DockHeader';
+import MacBookScroll from '@/components/MacBookScroll';
 
 const MagneticButton = ({ children, className }: { children: React.ReactNode, className?: string }) => {
     const ref = useRef<HTMLButtonElement>(null);
@@ -218,7 +219,7 @@ export default function Home() {
                             ))}
                         </h2>
                         <div className="overflow-hidden mt-8">
-                            <motion.p 
+                            <motion.p
                                 initial={{ y: "100%", opacity: 0 }}
                                 whileInView={{ y: 0, opacity: 1 }}
                                 viewport={{ once: true }}
@@ -268,12 +269,12 @@ export default function Home() {
                                             <div className="absolute top-0 left-0 w-full h-full bg-white mix-blend-difference transform translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                                         </div>
                                     </div>
-                                    
+
                                     <div className="flex items-center gap-4 mt-4 md:mt-0">
                                         <p className="text-neutral-500 font-light text-sm md:text-base max-w-[200px] text-right hidden md:block group-hover:text-neutral-300 transition-colors duration-500">
                                             {action.description}
                                         </p>
-                                        <motion.span 
+                                        <motion.span
                                             className="text-2xl md:text-4xl text-white opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500"
                                         >
                                             →
@@ -285,6 +286,9 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* 7. MACBOOK SCROLL ANIMATION */}
+            <MacBookScroll />
 
             {/* FOOTER */}
             <footer className="py-12 border-t border-neutral-900 text-center">
