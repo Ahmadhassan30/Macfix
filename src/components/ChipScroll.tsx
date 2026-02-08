@@ -291,6 +291,35 @@ export default function HeroAnimation() {
                                 {loadProgress}
                             </div>
                         </motion.div>
+
+                        {/* Dynamic Loading Messages */}
+                        <motion.div
+                            className="mt-8 text-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8, duration: 0.6 }}
+                        >
+                            <motion.p
+                                key={Math.floor(loadProgress / 10)}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                className="text-white/40 text-[13px] tracking-[0.15em] uppercase font-light"
+                            >
+                                {loadProgress < 10 && "Booting up the magic..."}
+                                {loadProgress >= 10 && loadProgress < 20 && "Where innovation meets precision"}
+                                {loadProgress >= 20 && loadProgress < 30 && "Designed in Lahore. Built for the world."}
+                                {loadProgress >= 30 && loadProgress < 40 && "Every Mac tells a story"}
+                                {loadProgress >= 40 && loadProgress < 50 && "Redefining repair, one chip at a time"}
+                                {loadProgress >= 50 && loadProgress < 60 && "Obsessed with perfection"}
+                                {loadProgress >= 60 && loadProgress < 70 && "Your Mac deserves the best"}
+                                {loadProgress >= 70 && loadProgress < 80 && "Precision engineering loading..."}
+                                {loadProgress >= 80 && loadProgress < 90 && "Almost ready to blow your mind"}
+                                {loadProgress >= 90 && loadProgress < 100 && "The wait is worth it"}
+                                {loadProgress === 100 && "Welcome to the future of repair"}
+                            </motion.p>
+                        </motion.div>
                     </motion.div>
                 </div>
 
